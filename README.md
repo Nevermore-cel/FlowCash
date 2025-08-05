@@ -40,12 +40,6 @@ source venv/bin/activate
 ### 3. Установка зависимостей
 
 ```bash
-pip install -r requirements.txt
-```
-
-Если файл `requirements.txt` отсутствует, установите зависимости вручную:
-
-```bash
 pip install django>=4.2
 pip install python-dotenv  # для переменных окружения (опционально)
 ```
@@ -192,5 +186,6 @@ class Transaction(models.Model):
 2. Выберите режим фильтрации (AND/OR)
 3. Установите нужные фильтры
 4. Нажмите "Применить фильтры"
+
 
 
