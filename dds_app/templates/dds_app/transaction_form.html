@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if action == 'create' %}Добавить транзакцию{% else %}Редактировать транзакцию{% endif %} - FlowCash
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>
+        <i class="bi {% if action == 'create' %}bi-plus-circle{% else %}bi-pencil{% endif %}"></i> 
+        {% if action == 'create' %}Добавить транзакцию{% else %}Редактировать транзакцию{% endif %}
+    </h1>
+    <div class="subtitle">Заполните все обязательные поля для {% if action == 'create' %}создания{% else %}изменения{% endif %} транзакции</div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-form"></i> Данные транзакции
+            </div>
+            <div class="card-body">
+                <form method="post" id="transaction-form">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Ошибки формы:</strong>
+                            <ul class="mb-0 mt-2">
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <!-- Дата -->
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.date.id_for_label }}" class="form-label">
+                                <i class="bi bi-calendar3"></i> {{ form.date.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.date }}
+                            {% if form.date.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.date.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Статус -->
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">
+                                <i class="bi bi-tags"></i> {{ form.status.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.status.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Тип -->
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.type.id_for_label }}" class="form-label">
+                                <i class="bi bi-arrow-up-down"></i> {{ form.type.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.type }}
+                            {% if form.type.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.type.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Сумма -->
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.amount.id_for_label }}" class="form-label">
+                                <i class="bi bi-currency-exchange"></i> {{ form.amount.label }} <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                {{ form.amount }}
+                                <span class="input-group-text">₽</span>
+                            </div>
+                            {% if form.amount.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.amount.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Категория -->
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">
+                                <i class="bi bi-folder"></i> {{ form.category.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.category.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Подкатегория -->
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.subcategory.id_for_label }}" class="form-label">
+                                <i class="bi bi-folder2"></i> {{ form.subcategory.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.subcategory }}
+                            {% if form.subcategory.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.subcategory.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Комментарий -->
+                    <div class="mb-3">
+                        <label for="{{ form.comment.id_for_label }}" class="form-label">
+                            <i class="bi bi-chat-text"></i> {{ form.comment.label }}
+                        </label>
+                        {{ form.comment }}
+                        {% if form.comment.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.comment.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Необязательное поле для дополнительной информации</div>
+                    </div>
+
+                    <div class="d-flex gap-2 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> 
+                            {% if action == 'create' %}Создать транзакцию{% else %}Сохранить изменения{% endif %}
+                        </button>
+                        <a href="{% url 'dds_app:transaction_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Глобальные переменные для управления состоянием
+let isFormSubmitting = false;
+let isInitializing = true;
+let userInteracted = false;
+let originalValues = {
+    type: '',
+    category: '',
+    subcategory: ''
+};
+
+// Основная функция загрузки категорий
+function loadCategories(typeValue, options = {}) {
+    const {
+        preserveCurrentSelection = false,
+        isUserAction = false,
+        callback = null
+    } = options;
+
+    console.log(`Loading categories for type: ${typeValue}`, {
+        preserveCurrentSelection,
+        isUserAction,
+        isFormSubmitting,
+        isInitializing
+    });
+
+    // Блокируем AJAX во время отправки формы
+    if (isFormSubmitting) {
+        console.log('Form is submitting, blocking AJAX request');
+        return;
+    }
+
+    const categorySelect = document.getElementById('id_category');
+    const subcategorySelect = document.getElementById('id_subcategory');
+    
+    if (!typeValue) {
+        console.log('No type value provided');
+        if (isUserAction) {
+            // Если пользователь очистил тип, очищаем зависимые поля
+            categorySelect.innerHTML = '<option value="">---------</option>';
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+        }
+        return;
+    }
+
+    // Сохраняем текущие значения
+    const currentCategory = categorySelect.value;
+    const currentSubcategory = subcategorySelect.value;
+
+    fetch(`{% url 'dds_app:ajax_load_categories' %}?type_value=${encodeURIComponent(typeValue)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Categories loaded:', data);
+            
+            // Очищаем и заполняем список категорий
+            categorySelect.innerHTML = '<option value="">---------</option>';
+            
+            data.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                categorySelect.appendChild(option);
+            });
+
+            // Логика выбора категории
+            let selectedCategory = '';
+            
+            if (preserveCurrentSelection && currentCategory) {
+                // Проверяем, доступна ли текущая категория для нового типа
+                const categoryExists = data.some(cat => cat.id === currentCategory);
+                if (categoryExists) {
+                    selectedCategory = currentCategory;
+                    console.log('Preserving current category:', selectedCategory);
+                } else {
+                    console.log('Current category not available for new type');
+                }
+            } else if (!isUserAction && data.length > 0) {
+                // При создании новой транзакции автоматически выбираем первую категорию
+                selectedCategory = data[0].id;
+                console.log('Auto-selecting first category:', selectedCategory);
+            }
+
+            if (selectedCategory) {
+                categorySelect.value = selectedCategory;
+                loadSubcategories(selectedCategory, {
+                    preserveCurrentSelection: preserveCurrentSelection && currentCategory === selectedCategory,
+                    isUserAction: false
+                });
+            } else {
+                // Очищаем подкатегории если категория не выбрана
+                subcategorySelect.innerHTML = '<option value="">---------</option>';
+            }
+
+            if (callback) callback();
+        })
+        .catch(error => {
+            console.error('Error loading categories:', error);
+            showError(categorySelect, 'Ошибка загрузки категорий. Попробуйте обновить страницу.');
+        });
+}
+
+// Основная функция загрузки подкатегорий
+function loadSubcategories(categoryValue, options = {}) {
+    const {
+        preserveCurrentSelection = false,
+        isUserAction = false,
+        callback = null
+    } = options;
+
+    console.log(`Loading subcategories for category: ${categoryValue}`, {
+        preserveCurrentSelection,
+        isUserAction,
+        isFormSubmitting,
+        isInitializing
+    });
+
+    // Блокируем AJAX во время отправки формы
+    if (isFormSubmitting) {
+        console.log('Form is submitting, blocking AJAX request');
+        return;
+    }
+
+    const subcategorySelect = document.getElementById('id_subcategory');
+    
+    if (!categoryValue) {
+        console.log('No category value provided');
+        if (isUserAction) {
+            // Если пользователь очистил категорию, очищаем подкатегории
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+        }
+        return;
+    }
+
+    // Сохраняем текущее значение
+    const currentSubcategory = subcategorySelect.value;
+
+    fetch(`{% url 'dds_app:ajax_load_subcategories' %}?category_value=${encodeURIComponent(categoryValue)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Subcategories loaded:', data);
+            
+            // Очищаем и заполняем список подкатегорий
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+            
+            data.forEach(subcategory => {
+                const option = document.createElement('option');
+                option.value = subcategory.id;
+                option.textContent = subcategory.name;
+                subcategorySelect.appendChild(option);
+            });
+
+            // Логика выбора подкатегории
+            let selectedSubcategory = '';
+            
+            if (preserveCurrentSelection && currentSubcategory) {
+                // Проверяем, доступна ли текущая подкатегория для новой категории
+                const subcategoryExists = data.some(subcat => subcat.id === currentSubcategory);
+                if (subcategoryExists) {
+                    selectedSubcategory = currentSubcategory;
+                    console.log('Preserving current subcategory:', selectedSubcategory);
+                } else {
+                    console.log('Current subcategory not available for new category');
+                }
+            } else if (!isUserAction && data.length > 0) {
+                // При создании новой транзакции автоматически выбираем первую подкатегорию
+                selectedSubcategory = data[0].id;
+                console.log('Auto-selecting first subcategory:', selectedSubcategory);
+            }
+
+            if (selectedSubcategory) {
+                subcategorySelect.value = selectedSubcategory;
+            }
+
+            if (callback) callback();
+        })
+        .catch(error => {
+            console.error('Error loading subcategories:', error);
+            showError(subcategorySelect, 'Ошибка загрузки подкатегорий. Попробуйте обновить страницу.');
+        });
+}
+
+// Функция отображения ошибок
+function showError(element, message) {
+    // Удаляем старые сообщения об ошибках
+    const existingErrors = element.parentNode.querySelectorAll('.alert-warning');
+    existingErrors.forEach(error => error.remove());
+    
+    // Добавляем новое сообщение об ошибке
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-warning mt-2';
+    errorDiv.innerHTML = `<i class="bi bi-exclamation-triangle"></i> ${message}`;
+    element.parentNode.appendChild(errorDiv);
+}
+
+// Функция инициализации формы
+function initializeForm() {
+    const typeSelect = document.getElementById('id_type');
+    const categorySelect = document.getElementById('id_category');
+    const subcategorySelect = document.getElementById('id_subcategory');
+    const action = "{{ action }}";
+
+    console.log('Initializing form...');
+    console.log('Action:', action);
+    console.log('Initial values:', {
+        type: typeSelect.value,
+        category: categorySelect.value,
+        subcategory: subcategorySelect.value
+    });
+
+    // Сохраняем исходные значения
+    originalValues = {
+        type: typeSelect.value,
+        category: categorySelect.value,
+        subcategory: subcategorySelect.value
+    };
+
+    // Логика инициализации в зависимости от режима
+    if (action === "edit") {
+        console.log('Edit mode - preserving original values');
+
+        // В режиме редактирования проверяем, нужно ли подгружать данные
+        if (originalValues.type) {
+            console.log('Loading categories for edit mode based on initial type');
+            loadCategories(originalValues.type, {
+                preserveCurrentSelection: true,
+                isUserAction: false,
+                callback: () => {
+                    // После загрузки категорий устанавливаем исходное значение
+                    if (originalValues.category) {
+                        categorySelect.value = originalValues.category;
+
+                        // Загружаем подкатегории
+                        loadSubcategories(originalValues.category, {
+                            preserveCurrentSelection: true,
+                            isUserAction: false,
+                            callback: () => {
+                                if (originalValues.subcategory) {
+                                    subcategorySelect.value = originalValues.subcategory;
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    } else {
+        console.log('Create mode - initializing with AJAX');
+
+        // В режиме создания загружаем данные если есть выбранный тип
+        if (originalValues.type) {
+            loadCategories(originalValues.type, {
+                preserveCurrentSelection: false,
+                isUserAction: false
+            });
+        }
+    }
+
+    isInitializing = false;
+}
+
+// Основная инициализация
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('id_type');
+    const categorySelect = document.getElementById('id_category');
+    const subcategorySelect = document.getElementById('id_subcategory');
+    const form = document.getElementById('transaction-form');
+
+    console.log('DOM loaded, setting up event handlers...');
+
+    // Инициализируем форму
+    initializeForm();
+
+    // Обработчик изменения типа транзакции
+    typeSelect.addEventListener('change', function() {
+        console.log('Type changed by user to:', this.value);
+        userInteracted = true;
+
+        if (this.value) {
+            loadCategories(this.value, {
+                preserveCurrentSelection: false, // При смене типа не сохраняем категорию
+                isUserAction: true
+            });
+        } else {
+            // Очищаем зависимые поля
+            categorySelect.innerHTML = '<option value="">---------</option>';
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+        }
+    });
+
+    // Обработчик изменения категории
+    categorySelect.addEventListener('change', function() {
+        console.log('Category changed by user to:', this.value);
+        userInteracted = true;
+
+        if (this.value) {
+            loadSubcategories(this.value, {
+                preserveCurrentSelection: false, // При смене категории не сохраняем подкатегорию
+                isUserAction: true
+            });
+        } else {
+            // Очищаем подкатегории
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+        }
+    });
+
+    // Обработчик отправки формы
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            console.log('Form submission started');
+            isFormSubmitting = true;
+            
+            // Логируем финальные значения
+            console.log('Final form values:', {
+                type: typeSelect.value,
+                category: categorySelect.value,
+                subcategory: subcategorySelect.value
+            });
+            
+            // Блокируем дальнейшие AJAX запросы
+            setTimeout(() => {
+                console.log('Form submission timeout - allowing AJAX again');
+                isFormSubmitting = false;
+            }, 5000); // Разблокируем через 5 секунд на случай ошибок
+        });
+
+        // Обработчик ошибок валидации формы
+        form.addEventListener('invalid', function() {
+            console.log('Form validation failed - unblocking AJAX');
+            isFormSubmitting = false;
+        });
+
+        // Убираем сообщения об ошибках при вводе
+        form.addEventListener('input', function(e) {
+            const alerts = e.target.parentNode.querySelectorAll('.alert-warning');
+            alerts.forEach(alert => alert.remove());
+        });
+    }
+
+    console.log('Event handlers set up successfully');
+});
+
+// Дополнительная защита от случайных AJAX запросов
+window.addEventListener('beforeunload', function() {
+    console.log('Page unloading - blocking AJAX');
+    isFormSubmitting = true;
+});
+</script>
+{% endblock %}
